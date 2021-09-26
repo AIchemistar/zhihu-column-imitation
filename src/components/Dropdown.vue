@@ -1,5 +1,5 @@
 <template>
-    <div class="dropdown" ref="dropdownRef"> <!-- dropdownRef就是HTML元素 -->
+        <div class="dropdown" ref="dropdownRef"> <!-- dropdownRef就是HTML元素 -->
         <a href="#" class="btn btn-outline-light my-2 dropdown-toggle" @click.prevent='toggleOpen'>
             {{title}}
         </a>
@@ -30,7 +30,7 @@ export default defineComponent({
         const isClickOutside = useClickOutside(dropdownRef)
         watch(isClickOutside, () => {
             if (isOpen.value && isClickOutside.value) {
-                        isOpen.value = false
+                isOpen.value = false
             }
         })
         return {
