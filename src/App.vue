@@ -5,29 +5,32 @@
     <form action="">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
-        <validateInput :rules="emailRules"></validateInput>
+        <validateInput
+          :rules="emailRules"
+          v-model="emailVal"
+          placeholder="请输入邮箱地址"
+          type="text"
+        />
+        <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
       </div>
 
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
-        <input
-          type="text" class="form-control" id="exampleInputEmail1"
-          v-model="emailRef.val"
-          @blur="validateEmail"
-        >
-        <div class="form-text" v-if="emailRef.error">{{emailRef.message}}</div>
+        <label class="form-label">密码</label>
+        <validateInput
+          :rules="passwordRules"
+          v-model="emailVal"
+          placeholder="请输入密码"
+          type="text"
+        />
+        <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
       </div>
-      <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">密码</label>
-        <input type="password" class="form-control" id="exampleInputPassword1">
-      </div>
-  </form>
+    </form>
 
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
@@ -78,6 +81,7 @@ export default defineComponent({
     ValidateInput
   },
   setup () {
+    const emailVal = ref('')
     const emailRef = reactive({
       val: '',
       error: false,
@@ -96,12 +100,22 @@ export default defineComponent({
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
     ]
+    const passwordRules: RulesProp = [
+      { type: 'required', message: '密码不能为空' },
+      {
+        type: 'range',
+        min: { message: '你的密码至少包括六位，不能含有空格', length: 6 },
+        max: { message: '你的密码不能超过24位', length: 24 }
+      }
+    ]
     return {
       list: testData,
       currentUser,
       emailRef,
       validateEmail,
-      emailRules
+      emailRules,
+      passwordRules,
+      emailVal
     }
   }
 })
