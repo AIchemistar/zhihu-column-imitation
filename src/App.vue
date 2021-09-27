@@ -2,7 +2,7 @@
   <div class="container">
     <global-header :user= "currentUser"></global-header>
     <!-- <column-list :list="list"></column-list> -->
-    <form action="">
+    <validate-from @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
         <validateInput
@@ -24,8 +24,12 @@
         />
         <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
       </div>
-    </form>
-
+      <template #submit> <!-- 使用具名插槽-->
+        <span class="btn btn-danger">
+          Submit
+        </span>
+      </template>
+    </validate-from>
   </div>
 </template>
 
@@ -35,6 +39,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
+import ValidateFrom from './components/ValidateFrom.vue'
 const currentUser: UserProps = {
   isLogin: true,
   name: 'Adrian'
@@ -78,7 +83,8 @@ export default defineComponent({
   components: {
     // ColumnList,
     GlobalHeader,
-    ValidateInput
+    ValidateInput,
+    ValidateFrom
   },
   setup () {
     const emailVal = ref('')
@@ -108,6 +114,9 @@ export default defineComponent({
         max: { message: '你的密码不能超过24位', length: 24 }
       }
     ]
+    const onFormSubmit = (result: boolean) => {
+      console.log('1234', result)
+    }
     return {
       list: testData,
       currentUser,
@@ -115,7 +124,8 @@ export default defineComponent({
       validateEmail,
       emailRules,
       passwordRules,
-      emailVal
+      emailVal,
+      onFormSubmit
     }
   }
 })
@@ -126,7 +136,7 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   margin-top: 0px;
 }

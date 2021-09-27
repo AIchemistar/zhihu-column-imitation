@@ -1,10 +1,8 @@
 <template>
   <div class="validate-input-container pb-3">
     <input
-        type="text"
         class="form-control"
         :class="{'is-invalid': inputRef.error}"
-        id="exampleInputEmail1"
         :value="inputRef.val"
         @blur="validateInput"
         @input="updateValue"
