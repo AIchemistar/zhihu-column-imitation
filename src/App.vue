@@ -10,7 +10,9 @@
           v-model="emailVal"
           placeholder="请输入邮箱地址"
           type="text"
+          ref="inputRef"
         />
+        <!-- 上面这个ref可以获取ValidateInput子组件 -->
         <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
       </div>
 
@@ -18,7 +20,7 @@
         <label class="form-label">密码</label>
         <validateInput
           :rules="passwordRules"
-          v-model="emailVal"
+          v-model="passwordVal"
           placeholder="请输入密码"
           type="text"
         />
@@ -39,7 +41,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
-import ValidateFrom from './components/ValidateFrom.vue'
+import ValidateFrom from './components/ValidateForm.vue'
 const currentUser: UserProps = {
   isLogin: true,
   name: 'Adrian'
@@ -87,6 +89,7 @@ export default defineComponent({
     ValidateFrom
   },
   setup () {
+    const inputRef = ref<any>('')
     const emailVal = ref('')
     const emailRef = reactive({
       val: '',
@@ -106,6 +109,7 @@ export default defineComponent({
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
     ]
+    const passwordVal = ref('')
     const passwordRules: RulesProp = [
       { type: 'required', message: '密码不能为空' },
       {
@@ -114,8 +118,8 @@ export default defineComponent({
         max: { message: '你的密码不能超过24位', length: 24 }
       }
     ]
-    const onFormSubmit = (result: boolean) => {
-      console.log('1234', result)
+    const onFormSubmit = (result: boolean) => { // 接收子组件传来的result
+      console.log('表单输入结果为', inputRef.value.validateInput())
     }
     return {
       list: testData,
@@ -125,7 +129,9 @@ export default defineComponent({
       emailRules,
       passwordRules,
       emailVal,
-      onFormSubmit
+      onFormSubmit,
+      inputRef,
+      passwordVal
     }
   }
 })
