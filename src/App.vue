@@ -20,17 +20,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue'
+import { computed, defineComponent, reactive, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import { useStore } from 'vuex'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
-const currentUser: UserProps = {
-  isLogin: false,
-  name: 'Adrian'
-}
+// const currentUser: UserProps = {
+//   isLogin: false,
+//   name: 'Adrian'
+// }
 
 export default defineComponent({
   name: 'App',
@@ -40,6 +40,8 @@ export default defineComponent({
     // Login
   },
   setup () {
+    const store = useStore()
+    const currentUser = computed(() => store.state.user)
     return {
       currentUser
     }
