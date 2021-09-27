@@ -35,6 +35,7 @@
 import { defineComponent, ref } from 'vue'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'Login',
@@ -44,6 +45,7 @@ export default defineComponent({
   },
   setup () {
     const emailVal = ref('')
+    const router = useRouter()
     const emailRules: RulesProp = [
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
@@ -59,6 +61,9 @@ export default defineComponent({
     ]
     const onFormSubmit = (result: boolean) => { // 接收子组件传来的result
       console.log('表单输入结果为', result)
+      if (result) { // 登陆成功后直接跳转
+        router.push({ name: 'column', params: { id: 1 } })
+      }
     }
     return {
       emailRules,
