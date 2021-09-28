@@ -18,7 +18,6 @@ import { computed, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '../store'
-import { testData, testPosts } from '../testData'
 import PostList from '../components/PostList.vue'
 export default defineComponent({
   components: {

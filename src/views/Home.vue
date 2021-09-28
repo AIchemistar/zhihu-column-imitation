@@ -20,7 +20,6 @@
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '../store'
-import { testData } from '../testData'
 import ColumnList from '../components/ColumnList.vue'
 export default defineComponent({
   name: 'Home',
@@ -30,7 +29,6 @@ export default defineComponent({
   setup () {
     const store = useStore<GlobalDataProps>()
     const list = computed(() => store.state.columns)
-    const biggerColumnLen = computed(() => store.getters.biggerColumnsLen)
     return {
       list
     }
