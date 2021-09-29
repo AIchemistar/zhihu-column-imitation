@@ -22,11 +22,11 @@ export interface ColumnProps {
 export interface PostProps {
   _id: string;
   title: string;
-  excerpt?: string;
+  excerpt?: string; // 摘要
   content?: string;
   image?: ImageProps;
   createdAt: string;
-  column: string;
+  column: string; // 就是columnId
 }
 
 export interface GlobalDataProps {
@@ -50,12 +50,28 @@ const store = createStore<GlobalDataProps>({
     },
     fetchColumns (state, rawData) {
       state.columns = rawData.data.list
+    },
+    fetchColumn (state, rawData) {
+      state.columns = [rawData.data]
+    },
+    fetchPosts (state, rawData) {
+      state.posts = rawData.data.list
     }
   },
   actions: {
     fetchColumns (context) {
       axios.get('/columns').then(resp => {
         context.commit('fetchColumns', resp.data)
+      })
+    },
+    fetchColumn ({ commit }, cid) {
+      axios.get(`/columns/${cid}`).then(resp => {
+        commit('fetchColumn', resp.data)
+      })
+    },
+    fetchPosts ({ commit }, cid) {
+      axios.get(`/columns/${cid}/posts`).then(resp => {
+        commit('fetchPosts', resp.data)
       })
     }
   },
