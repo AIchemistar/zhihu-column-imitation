@@ -55,14 +55,13 @@ export default defineComponent({
     ]
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        console.log('你麻痹啊卧槽')
         const { columnId } = store.state.user
         if (columnId) {
           const newPost: PostProps = {
-            id: new Date().getTime(),
+            _id: new Date().getTime().toString(),
             title: titleVal.value,
             content: contentVal.value,
-            columnId,
+            column: columnId.toString(),
             createdAt: new Date().toLocaleString()
           }
           store.commit('createPost', newPost)

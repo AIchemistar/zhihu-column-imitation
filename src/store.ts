@@ -1,21 +1,44 @@
+import axios from 'axios'
 import { createStore } from 'vuex'
-import { testData, testPosts, ColumnProps, PostProps } from './testData'
-export { ColumnProps, PostProps } from './testData'
+// import { testData, testPosts, ColumnProps, PostProps } from './testData'
+// export { ColumnProps, PostProps } from './testData'
 interface UserProps {
   isLogin: boolean;
   name?: string;
   id?: number;
   columnId?: number;
 }
+interface ImageProps {
+  _id?: string;
+  url?: string;
+  createdAt?: string;
+}
+export interface ColumnProps {
+  _id: string;
+  title: string;
+  avatar?: ImageProps;
+  description: string;
+}
+export interface PostProps {
+  _id: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  image?: ImageProps;
+  createdAt: string;
+  column: string;
+}
+
 export interface GlobalDataProps {
   columns: ColumnProps[];
   posts: PostProps[];
   user: UserProps;
 }
+
 const store = createStore<GlobalDataProps>({
   state: {
-    columns: testData,
-    posts: testPosts,
+    columns: [],
+    posts: [],
     user: { isLogin: true, name: 'Adrian', columnId: 1 }
   },
   mutations: {
@@ -24,17 +47,24 @@ const store = createStore<GlobalDataProps>({
     },
     createPost (state, newPost) {
       state.posts.push(newPost)
+    },
+    fetchColumns (state, rawData) {
+      state.columns = rawData.data.list
+    }
+  },
+  actions: {
+    fetchColumns (context) {
+      axios.get('/columns').then(resp => {
+        context.commit('fetchColumns', resp.data)
+      })
     }
   },
   getters: {
-    biggerColumnsLen (state) {
-      return state.columns.filter(c => c.id > 2).length
+    getColumnById: (state) => (id: string) => {
+      return state.columns.find(c => c._id === id)
     },
-    getColumnById: (state) => (id: number) => {
-      return state.columns.find(c => c.id === id)
-    },
-    getPostByCid: (state) => (cid: number) => {
-      return state.posts.filter(post => post.columnId === cid)
+    getPostByCid: (state) => (cid: string) => {
+      return state.posts.filter(post => post.column === cid)
     }
   }
 })
