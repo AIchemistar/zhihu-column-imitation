@@ -64,6 +64,14 @@ export default defineComponent({
     const onFormSubmit = (result: boolean) => { // 接收子组件传来的result
       // console.log('表单输入结果为', result)
       if (result) {
+        const payload = {
+          email: emailVal.value,
+          password: passwordVal.value
+        }
+        store.dispatch('loginAndFetch', payload).then(data => {
+          console.log(data)
+          router.push('/')
+        })
         router.push('/') // 登陆成功后直接跳转到首页
         store.commit('login')
       }
