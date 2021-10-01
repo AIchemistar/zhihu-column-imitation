@@ -8,7 +8,7 @@ export interface ResponseType<P = {[key: string]: any}> {
 export interface UserProps {
   isLogin: boolean;
   nickName?: string;
-  _id?: number;
+  _id?: string;
   column?: string;
   email?: string;
 }
@@ -16,6 +16,7 @@ export interface ImageProps {
   _id?: string;
   url?: string;
   createdAt?: string;
+  fitUrl?: string;
 }
 export interface ColumnProps {
   _id: string;
@@ -28,9 +29,10 @@ export interface PostProps {
   title: string;
   excerpt?: string; // 摘要
   content?: string;
-  image?: ImageProps;
+  image?: ImageProps | string;
   createdAt?: string;
   column: string; // 就是columnId
+  author?: string;
 }
 export interface GlobalErrorProps {
   status: boolean;
@@ -51,9 +53,13 @@ const getAndCommit = async (url: string, mutationName: string, commit: Commit) =
   return data
 }
 const postAndCommit = async (url: string, mutationName: string, commit: Commit, payload: any) => {
-  const { data } = await axios.post(url, payload)
-  commit(mutationName, data)
-  return data
+  try {
+    const { data } = await axios.post(url, payload)
+    commit(mutationName, data)
+    return data
+  } catch (e) {
+    return Promise.reject(new Error('network issue'))
+  }
 }
 const store = createStore<GlobalDataProps>({
   state: {
@@ -115,6 +121,9 @@ const store = createStore<GlobalDataProps>({
     },
     fetchCurrentUser ({ commit }) {
       return getAndCommit('/user/current', 'fetchCurrentUser', commit)
+    },
+    createPost ({ commit }, payload) {
+      return postAndCommit('/posts', 'createPost', commit, payload)
     },
     login ({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
