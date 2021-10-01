@@ -1,15 +1,18 @@
 import axios from 'axios'
 import { createStore, Commit } from 'vuex'
-// import { testData, testPosts, ColumnProps, PostProps } from './testData'
-// export { ColumnProps, PostProps } from './testData'
+export interface ResponseType<P = {[key: string]: any}> {
+  code: number;
+  msg: string;
+  data: P;
+}
 export interface UserProps {
   isLogin: boolean;
   nickName?: string;
   _id?: number;
-  column?: number;
+  column?: string;
   email?: string;
 }
-interface ImageProps {
+export interface ImageProps {
   _id?: string;
   url?: string;
   createdAt?: string;
@@ -21,12 +24,12 @@ export interface ColumnProps {
   description: string;
 }
 export interface PostProps {
-  _id: string;
+  _id?: string;
   title: string;
   excerpt?: string; // 摘要
   content?: string;
   image?: ImageProps;
-  createdAt: string;
+  createdAt?: string;
   column: string; // 就是columnId
 }
 export interface GlobalErrorProps {
