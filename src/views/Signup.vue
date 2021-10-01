@@ -57,7 +57,7 @@ export default defineComponent({
     ValidateInput,
     ValidateForm
   },
-  setup () {
+  setup() {
     const formData = reactive({
       email: '',
       nickName: '',

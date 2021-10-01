@@ -1,17 +1,17 @@
 <template>
-  <teleport to="#back">
-    <div
-      class="d-flex justify-content-center align-items-center h-100 w-100 loading-container"
-      :style="{backgroundColor: background || ''}"
-    >
-      <div class="loading-content">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">{{ text || 'loading'}}</span>
-        </div>
-        <p v-if="text" class="text-primary small">{{text}}</p>
+<teleport to="#back">
+  <div
+    class="d-flex justify-content-center align-items-center h-100 w-100 loading-container"
+    :style="{backgroundColor: background || ''}"
+  >
+    <div class="loading-content">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">{{ text || 'loading'}}</span>
       </div>
+      <p v-if="text" class="text-primary small">{{text}}</p>
     </div>
-  </teleport>
+  </div>
+</teleport>
 </template>
 
 <script lang="ts">
@@ -26,7 +26,7 @@ export default defineComponent({
       type: String
     }
   },
-  setup () {
+  setup() {
     const node = document.createElement('div')
     node.id = 'back'
     document.body.appendChild(node)

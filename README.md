@@ -1,4 +1,4 @@
-# zhihu-column-imitation
+# zhihu
 
 ## Project setup
 ```

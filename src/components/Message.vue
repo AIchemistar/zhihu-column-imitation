@@ -3,8 +3,8 @@
     <div class="alert message-info fixed-top w-50 mx-auto d-flex justify-content-between mt-2"
       :class="classObject" v-if="isVisible">
       <span>{{message}}</span>
-      <button type="button" class="btn-close" aria-label="Close" @click.prevent="hide">
-        <!-- <span aria-hidden="true">&times;</span> -->
+      <button type="button" class="close" aria-label="Close" @click.prevent="hide">
+        <span aria-hidden="true">&times;</span>
       </button>
     </div>
   </teleport>
@@ -23,7 +23,7 @@ export default defineComponent({
     }
   },
   emits: ['close-message'],
-  setup (props, context) {
+  setup(props, context) {
     useDOMCreate('message')
     const isVisible = ref(true)
     const classObject = {

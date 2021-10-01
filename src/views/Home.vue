@@ -27,13 +27,12 @@ export default defineComponent({
   components: {
     ColumnList
   },
-  setup () {
+  setup() {
     const store = useStore<GlobalDataProps>()
     onMounted(() => {
       store.dispatch('fetchColumns')
     })
     const list = computed(() => store.state.columns)
-
     return {
       list
     }

@@ -11,7 +11,7 @@
       <template #loading>
         <div class="d-flex">
           <div class="spinner-border text-secondary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="sr-only">Loading...</span>
           </div>
           <h2>正在上传</h2>
         </div>
@@ -50,6 +50,7 @@
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
@@ -63,7 +64,7 @@ export default defineComponent({
     ValidateForm,
     Uploader
   },
-  setup () {
+  setup() {
     const titleVal = ref('')
     const router = useRouter()
     const store = useStore<GlobalDataProps>()
@@ -133,6 +134,6 @@ export default defineComponent({
 .create-post-page .file-upload-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 被容器容纳 所以图片会被裁掉一部分*/
+  object-fit: cover;
 }
 </style>

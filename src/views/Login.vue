@@ -1,43 +1,39 @@
 <template>
-  <validate-form @form-submit="onFormSubmit">
-    <div class="mb-3">
-      <label class="form-label">邮箱地址</label>
-      <validateInput
-        :rules="emailRules"
-        v-model="emailVal"
-        placeholder="请输入邮箱地址"
-        type="text"
-        ref="inputRef"
-      />
-      <!-- 上面这个ref可以获取ValidateInput子组件 -->
-      <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">密码</label>
-      <validateInput
-        :rules="passwordRules"
-        v-model="passwordVal"
-        placeholder="请输入密码"
-        type="text"
-      />
-      <!-- {{emailVal}}这一行可以用来验证v-model双向绑定 -->
-    </div>
-    <template #submit> <!-- 使用具名插槽-->
-      <span class="btn btn-danger">
-        Submit
-      </span>
-    </template>
-  </validate-form>
+  <div class="login-page mx-auto p-3 w-330">
+    <h5 class="my-4 text-center">登录到者也</h5>
+    <validate-form @form-submit="onFormSubmit">
+      <div class="mb-3">
+        <label class="form-label">邮箱地址</label>
+        <validate-input
+          :rules="emailRules" v-model="emailVal"
+          placeholder="请输入邮箱地址"
+          type="text"
+          ref="inputRef"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">密码</label>
+        <validate-input
+          type="password"
+          placeholder="请输入密码"
+          :rules="passwordRules"
+          v-model="passwordVal"
+        />
+      </div>
+      <template #submit>
+        <button type="submit" class="btn btn-primary btn-block btn-large">登录</button>
+      </template>
+    </validate-form>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
-import { useRouter } from 'vue-router'
-import createMessage from '@/components/createMessage'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   name: 'Login',
@@ -45,25 +41,19 @@ export default defineComponent({
     ValidateInput,
     ValidateForm
   },
-  setup () {
-    const store = useStore()
+  setup() {
     const emailVal = ref('')
     const router = useRouter()
+    const store = useStore()
     const emailRules: RulesProp = [
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
     ]
     const passwordVal = ref('')
     const passwordRules: RulesProp = [
-      { type: 'required', message: '密码不能为空' },
-      {
-        type: 'range',
-        min: { message: '你的密码至少包括六位，不能含有空格', length: 6 },
-        max: { message: '你的密码不能超过24位', length: 24 }
-      }
+      { type: 'required', message: '密码不能为空' }
     ]
-    const onFormSubmit = (result: boolean) => { // 接收子组件传来的result
-      // console.log('表单输入结果为', result)
+    const onFormSubmit = (result: boolean) => {
       if (result) {
         const payload = {
           email: emailVal.value,
@@ -77,8 +67,6 @@ export default defineComponent({
         }).catch(e => {
           console.log(e)
         })
-        // router.push('/') // 登陆成功后直接跳转到首页
-        // store.commit('login')
       }
     }
     return {

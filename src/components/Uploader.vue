@@ -1,6 +1,6 @@
 <template>
   <div class="file-upload">
-    <div class="file-upload-container"  @click.prevent="triggerUpload" v-bind="$attrs">
+    <div class="file-upload-container" @click.prevent="triggerUpload" v-bind="$attrs">
       <slot v-if="fileStatus === 'loading'" name="loading">
         <button class="btn btn-primary" disabled>正在上传...</button>
       </slot>
@@ -20,7 +20,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue'
+import { defineComponent, ref, PropType } from 'vue'
 import axios from 'axios'
 type UploadStatus = 'ready' | 'loading' | 'success' | 'error'
 type CheckFunction = (file: File) => boolean;
@@ -36,7 +36,7 @@ export default defineComponent({
   },
   inheritAttrs: false,
   emits: ['file-uploaded', 'file-uploaded-error'],
-  setup (props, context) {
+  setup(props, context) {
     const fileInput = ref<null | HTMLInputElement>(null)
     const fileStatus = ref<UploadStatus>('ready')
     const uploadedData = ref()
@@ -63,7 +63,6 @@ export default defineComponent({
             'Content-Type': 'multipart/form-data'
           }
         }).then(resp => {
-          console.log(resp.data)
           fileStatus.value = 'success'
           uploadedData.value = resp.data
           context.emit('file-uploaded', resp.data)

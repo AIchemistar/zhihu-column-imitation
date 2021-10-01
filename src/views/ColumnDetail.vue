@@ -14,17 +14,17 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { ColumnProps, GlobalDataProps } from '../store'
+import { GlobalDataProps, ColumnProps } from '../store'
 import PostList from '../components/PostList.vue'
-import { generateFitUrl } from '@/helper'
+import { addColumnAvatar } from '../helper'
 export default defineComponent({
   components: {
     PostList
   },
-  setup () {
+  setup() {
     const route = useRoute()
     const store = useStore<GlobalDataProps>()
     const currentId = route.params.id
@@ -33,16 +33,15 @@ export default defineComponent({
       store.dispatch('fetchPosts', currentId)
     })
     const column = computed(() => {
-      const selectColumn = store.getters.getColumnById(currentId) as ColumnProps
+      const selectColumn = store.getters.getColumnById(currentId) as ColumnProps | undefined
       if (selectColumn) {
-        generateFitUrl(selectColumn, 100, 100)
+        addColumnAvatar(selectColumn, 100, 100)
       }
       return selectColumn
     })
-    const list = computed(() => store.getters.getPostByCid(currentId))
+    const list = computed(() => store.getters.getPostsByCid(currentId))
 
     return {
-      route,
       column,
       list
     }
