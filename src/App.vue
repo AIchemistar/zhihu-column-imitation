@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <global-header :user= "currentUser"></global-header>
-    <h1>{{error.message}}</h1>
     <loader v-if="isLoading" text="拼命加载中" background='rgba(0,0,0, 0.8'></loader>
     <router-view></router-view>
     <!-- <home></home> -->
@@ -22,11 +21,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref } from 'vue'
+import { computed, defineComponent, onMounted, reactive, ref, warn, watch } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useStore } from 'vuex'
 import GlobalHeader from './components/GlobalHeader.vue'
 import Loader from './components/Loader.vue'
+import createMessage from './components/createMessage'
 import { GlobalDataProps } from './store'
 import axios from 'axios'
 // const currentUser: UserProps = {
@@ -54,6 +54,12 @@ export default defineComponent({
         store.dispatch('fetchCurrentUser')
       }
     })
+    watch(() => error.value.status, () => {
+      const { status, message } = error.value
+      if (status && message) {
+        createMessage(message, 'error')
+      }
+    })
     return {
       currentUser,
       isLoading,
@@ -64,12 +70,5 @@ export default defineComponent({
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
-  color: #2c3e50;
-  margin-top: 0px;
-}
+
 </style>
