@@ -28,10 +28,11 @@ import { defineComponent, onMounted, PropType, reactive } from 'vue'
 import { emitter } from './ValidateForm.vue'
 const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 interface RuleProp {
-    type: 'required' | 'email' | 'range'
+    type: 'required' | 'email' | 'range' | 'custom'
     message?: string
     min?: {length: number; message: string}
     max?: {length: number; message: string}
+    validator?: () => boolean;
 }
 export type RulesProp = RuleProp[]
 export type TagType = 'input' | 'textarea' // 由用户确定传入的是input还是textarea
@@ -81,6 +82,9 @@ export default defineComponent({
                 }
                 break
               }
+              case 'custom':
+                passed = rule.validator ? rule.validator() : true
+                break
               default: // 后续还可以添加新的错误类型
                 break
             }
