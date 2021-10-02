@@ -80,8 +80,8 @@ const store = createStore<GlobalDataProps>({
     // login(state) {
     //   state.user = { ...state.user, isLogin: true, name: 'viking' }
     // },
-    createPost(state, newPost) {
-      state.posts.push(newPost)
+    createPost(state, { data }) {
+      state.posts.push(data)
     },
     fetchColumns(state, rawData) {
       state.columns = rawData.data.list
@@ -103,6 +103,9 @@ const store = createStore<GlobalDataProps>({
           return post
         }
       })
+    },
+    deletePost(state, { data }) {
+      state.posts = state.posts.filter(post => post._id !== data._id)
     },
     setLoading(state, status) {
       state.loading = status
@@ -127,31 +130,31 @@ const store = createStore<GlobalDataProps>({
   },
   actions: {
     fetchColumns({ commit }) {
-      return getAndCommit('/columns', 'fetchColumns', commit)
+      return asyncAndCommit('/columns', 'fetchColumns', commit)
     },
     fetchColumn({ commit }, cid) {
-      return getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
+      return asyncAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
     },
     fetchPosts({ commit }, cid) {
-      return getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
+      return asyncAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     },
     fetchPost({ commit }, id) {
-      return getAndCommit(`/posts/${id}`, 'fetchPost', commit)
-    },
-    updatePost({ commit }, { id, payload }) {
-      return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, {
-        method: 'patch',
-        data: payload
-      })
+      return asyncAndCommit(`/posts/${id}`, 'fetchPost', commit)
     },
     fetchCurrentUser({ commit }) {
-      return getAndCommit('/user/current', 'fetchCurrentUser', commit)
+      return asyncAndCommit('/user/current', 'fetchCurrentUser', commit)
     },
     login({ commit }, payload) {
-      return postAndCommit('/user/login', 'login', commit, payload)
+      return asyncAndCommit('/user/login', 'login', commit, { method: 'post', data: payload })
     },
     createPost({ commit }, payload) {
-      return postAndCommit('/posts', 'createPost', commit, payload)
+      return asyncAndCommit('/posts', 'createPost', commit, { method: 'post', data: payload })
+    },
+    updatePost({ commit }, { id, payload }) {
+      return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, { method: 'patch', data: payload })
+    },
+    deletePost({ commit }, id) {
+      return asyncAndCommit(`/posts/${id}`, 'deletePost', commit, { method: 'delete' })
     },
     loginAndFetch({ dispatch }, loginData) {
       return dispatch('login', loginData).then(() => {
