@@ -1,29 +1,31 @@
 <template>
   <div class="post-detail-page">
-    <modal title="删除文章" :visible="modalIsVisible"
+    <modal title="删除文章" content="确定要删除这篇文章吗？"
       @modal-on-close="modalIsVisible = false"
       @modal-on-confirm="hideAndDelete"
+      :visible="modalIsVisible"
     >
-      <p>确定要删除这篇文章吗？</p>
     </modal>
+    <nav aria-label="breadcrumb" v-if="currentPost">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><router-link to="/">首页</router-link></li>
+        <li class="breadcrumb-item"><router-link :to="`/column/${currentPost.column}`">专栏首页</router-link></li>
+        <li class="breadcrumb-item active" aria-current="page">{{currentPost.title}}</li>
+      </ol>
+    </nav>
     <article class="w-75 mx-auto mb-5 pb-3" v-if="currentPost">
       <img :src="currentImageUrl" alt="currentPost.title" class="rounded-lg img-fluid my-4" v-if="currentImageUrl">
       <h2 class="mb-4">{{currentPost.title}}</h2>
       <div class="user-profile-component border-top border-bottom py-3 mb-5 align-items-center row g-0">
         <div class="col">
-          <user-profile :user="currentPost.author"></user-profile>
+          <user-profile :user="currentPost.author" v-if="typeof currentPost.author === 'object'"></user-profile>
         </div>
         <span class="text-muted col text-right font-italic">发表于：{{currentPost.createdAt}}</span>
       </div>
       <div v-html="currentHTML"></div>
       <div v-if="showEditArea" class="btn-group mt-5">
-        <router-link
-        type="button"
-        class="btn btn-success"
-        :to="{name: 'create', query: { id: currentPost._id }}">
-          编辑
-        </router-link>
-        <button type="button" class="btn btn-danger" @click.prevent="modalIsVisible = true">删除</button>
+        <router-link type="button" class="btn btn-success" :to="{ name: 'create', query: {id: currentPost._id}}">编辑</router-link>
+        <button type="button" class="btn btn-danger" @click="modalIsVisible = true">删除</button>
       </div>
     </article>
   </div>
@@ -38,7 +40,6 @@ import { GlobalDataProps, PostProps, ImageProps, UserProps, ResponseType } from 
 import UserProfile from '../components/UserProfile.vue'
 import Modal from '../components/Modal.vue'
 import createMessage from '../components/createMessage'
-import router from '@/router'
 
 export default defineComponent({
   name: 'post-detail',
@@ -48,10 +49,10 @@ export default defineComponent({
   },
   setup() {
     const store = useStore<GlobalDataProps>()
-    const route = useRoute()
     const router = useRouter()
-    const modalIsVisible = ref(false)
+    const route = useRoute()
     const currentId = route.params.id
+    const modalIsVisible = ref(false)
     const md = new MarkdownIt()
     onMounted(() => {
       store.dispatch('fetchPost', currentId)
@@ -59,16 +60,8 @@ export default defineComponent({
     const currentPost = computed<PostProps>(() => store.getters.getCurrentPost(currentId))
     const currentHTML = computed(() => {
       if (currentPost.value && currentPost.value.content) {
-        return md.render(currentPost.value.content)
-      }
-    })
-    const showEditArea = computed(() => {
-      const { isLogin, _id } = store.state.user
-      if (currentPost.value && currentPost.value.author && isLogin) {
-        const postAuthor = currentPost.value.author as UserProps
-        return postAuthor._id === _id
-      } else {
-        return false
+        const { isHTML, content } = currentPost.value
+        return isHTML ? content : md.render(content)
       }
     })
     const currentImageUrl = computed(() => {
@@ -79,9 +72,18 @@ export default defineComponent({
         return null
       }
     })
+    const showEditArea = computed(() => {
+      if (currentPost.value && currentPost.value.author) {
+        const postAuthor = currentPost.value.author as UserProps
+        return postAuthor._id === store.state.user._id
+      } else {
+        return false
+      }
+    })
     const hideAndDelete = () => {
       modalIsVisible.value = false
       store.dispatch('deletePost', currentId).then((rawData: ResponseType<PostProps>) => {
+        console.log(rawData)
         createMessage('删除成功，2秒后跳转到专栏首页', 'success', 2000)
         setTimeout(() => {
           router.push({ name: 'column', params: { id: rawData.data.column } })
